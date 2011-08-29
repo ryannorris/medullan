@@ -21,8 +21,8 @@ public class WelcomeController {
 	
 	@RequestMapping("/hello")
 	public String helloWorld(Model model) {
-		car.startEngine();
-		return "goodbye";
+	//	car.startEngine();
+		return "home";
 	}
 	
 	@Autowired

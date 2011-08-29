@@ -10,7 +10,7 @@ import com.medullan.ref.webapp.WelcomeController;
 import junit.framework.TestCase;
 import org.springframework.ui.Model;
 
-public class a extends TestCase{
+public class WelcomeControllerTest extends TestCase{
 
 	@Test
     public void testHandleRequestView() throws Exception{		

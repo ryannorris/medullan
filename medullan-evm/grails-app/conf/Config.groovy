@@ -10,22 +10,34 @@
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
+import grails.plugins.springsecurity.SecurityConfigType
+
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
-grails.mime.use.accept.header = false
-grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
-                      xml: ['text/xml', 'application/xml'],
-                      text: 'text/plain',
-                      js: 'text/javascript',
-                      rss: 'application/rss+xml',
-                      atom: 'application/atom+xml',
-                      css: 'text/css',
-                      csv: 'text/csv',
-                      all: '*/*',
-                      json: ['application/json','text/json'],
-                      form: 'application/x-www-form-urlencoded',
-                      multipartForm: 'multipart/form-data'
-                    ]
+grails.mime.use.accept.header = true  // turn this on
+grails.mime.types = [
+			html: [
+				'text/html',
+				'application/xhtml+xml'
+			],
+			json: [
+				'application/json',
+				'text/json'
+			],
+			xml: [
+				'text/xml',
+				'application/xml'
+			],
+			text: 'text/plain',
+			js: 'text/javascript',
+			rss: 'application/rss+xml',
+			atom: 'application/atom+xml',
+			css: 'text/css',
+			csv: 'text/csv',
+			all: '*/*',
+			form: 'application/x-www-form-urlencoded',
+			multipartForm: 'multipart/form-data'
+		]
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
@@ -53,38 +65,58 @@ grails.exceptionresolver.params.exclude = ['password']
 
 // set per-environment serverURL stem for creating absolute links
 environments {
-    production {
-        grails.serverURL = "http://www.changeme.com"
-    }
-    development {
-        grails.serverURL = "http://localhost:8080/${appName}"
-    }
-    test {
-        grails.serverURL = "http://localhost:8080/${appName}"
-    }
+	production { grails.serverURL = "http://medullan-evm.elasticbeanstalk.com" }
+	development { grails.serverURL = "http://medullan.dev:8080/${appName}" }
+	test { grails.serverURL = "http://localhost:8080/${appName}" }
 
+}
+
+rally {
+	username = "rnorris@medullan.com"
+	password = "Wfly, wnf?"
+	api { version = 1.26 }
 }
 
 // log4j configuration
 log4j = {
-    // Example of changing the log pattern for the default console
-    // appender:
-    //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+	// Example of changing the log pattern for the default console
+	// appender:
+	//
+	appenders {
+		console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+	}
 
-    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-           'org.codehaus.groovy.grails.web.pages', //  GSP
-           'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping', // URL mapping
-           'org.codehaus.groovy.grails.commons', // core / classloading
-           'org.codehaus.groovy.grails.plugins', // plugins
-           'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-           'org.springframework',
-           'org.hibernate',
-           'net.sf.ehcache.hibernate'
+	error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+			'org.codehaus.groovy.grails.web.pages', //  GSP
+			'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+			'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+			'org.codehaus.groovy.grails.web.mapping', // URL mapping
+			'org.codehaus.groovy.grails.commons', // core / classloading
+			'org.codehaus.groovy.grails.plugins', // plugins
+			'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+			'org.springframework',
+			'org.hibernate',
+			'net.sf.ehcache.hibernate'
 
-    warn   'org.mortbay.log'
+	warn   'org.mortbay.log'
+	debug	'grails.app.controller'
+		   // 'grails.rally.plugin.api',
+		   // 'medullan.evm'
 }
+
+grails.plugins.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
+grails.plugins.springsecurity.interceptUrlMap = [
+	'/favicon.ico': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+	'/css/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+	'/js/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+	'/images/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+	'/login/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+	'/**': ['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'],
+ ]
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'medullan.evm.User'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'medullan.evm.UserRole'
+grails.plugins.springsecurity.authority.className = 'medullan.evm.Role'
+grails.plugins.springsecurity.requestMap.className = 'medullan.evm.RequestMap'
+// grails.plugins.springsecurity.securityConfigType = 'Requestmap'
